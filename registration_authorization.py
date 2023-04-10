@@ -4,12 +4,12 @@ def write(login, password):
         print('Пользователь успешно зарегистрирован')
 
 
-def read(login):
+def comp_data(login):
     with open('storage.txt', encoding='utf-8') as f:
         for line in f:
-            store_login, store_password = line.split(':')
-            if login == store_login:
-                return store_password.strip()
+            saved_login, saved_password = line.split(':')
+            if login == saved_login:
+                return saved_password.strip()
 
         
 def registration():
@@ -18,10 +18,8 @@ def registration():
         login = input('Пожалуйста, введите логин (от 3 до 20 символов): ')
         assert 3 <= len(login) <= 20, 'Некорректный логин'
         password = input('Введите пароль: ')
-        if not (4 <= len(password) <= 32):
-            print('Некорректный пароль')
-            continue
-        if read(login):
+        assert 4 <= len(password) <= 32, 'Некорректный пароль'
+        if comp_data(login):
             print('Пользователь уже зарегистрирован')
             break
         else:
@@ -33,35 +31,40 @@ def authorization():
     print('Авторизация пользователя')
     while True:
         login = input('Введите логин: ')
-        store_password = read(login)
-        if store_password is None:
+        if not comp_data(login):
             print('Такого пользователя не существует')
             break
         password = input('Введите пароль: ')
-        store_password = read(login)
-        if password == store_password:
+        saved_password = comp_data(login)
+        if password == saved_password:
             print('Авторизация успешна')
             break
-        read(login)
         print('Неправильный пароль')
 
 
-def main():
+def input_data():
+    reg = '1'
+    auth = '2'
     while True:
-        reg_or_auth = input("Введите '1' - для регистрации, '2' - для авторизации: ")
-        if reg_or_auth == '1':
+        reg_or_auth = input("'1' - для регистрации, '2' - для авторизации: ")
+        if reg_or_auth == reg:
             registration()
-        elif reg_or_auth == '2':
+        elif reg_or_auth == auth:
             authorization()
         else:
             print('Некорректный ввод')
+
+
+def main():
+    print("Привет! Выбери дейстивие:")
+    input_data()
 
 
 while True:
     try:
         main()
     except AssertionError:
-        print('Логин должен быть от 3 до 20 символов')
+        print('Логин должен быть от 3 до 20 символов, а пароль должен быть от 4 до 32 символов')
 
 
 if __name__ == '__main__':
